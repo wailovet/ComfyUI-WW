@@ -83,10 +83,10 @@ class ImageResize:
 
 
 NODE_CLASS_MAPPINGS = {
-    "ImageResize+": ImageResize,
+    "ImageResize": ImageResize,
 }
 
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "ImageResize+": "ImageResize+",
+    "ImageResize": "ImageResize",
 }
