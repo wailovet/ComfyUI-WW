@@ -57,7 +57,7 @@ class ImageResize:
     RETURN_TYPES = ("IMAGE", "INT", "INT",)
     RETURN_NAMES = ("IMAGE", "width", "height",)
     FUNCTION = "execute"
-    CATEGORY = "image"
+    CATEGORY = "WW"
 
     def execute(self, image, width, height, keep_proportion, interpolation="nearest"):
         if keep_proportion is True:
