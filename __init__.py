@@ -50,7 +50,7 @@ class ImageResize:
                 "width": ("INT", {"default": 512, "min": 0, "max": MAX_RESOLUTION, "step": 8, }),
                 "height": ("INT", {"default": 512, "min": 0, "max": MAX_RESOLUTION, "step": 8, }),
                 "interpolation": (["nearest", "bilinear", "bicubic", "area", "nearest-exact", "lanczos"],),
-                "keep_proportion": ("BOOLEAN", {"default": False}),
+                "keep_proportion": ("BOOLEAN", {"default": True}),
             }
         }
 
