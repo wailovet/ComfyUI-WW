@@ -57,7 +57,7 @@ class ImageResize:
     RETURN_TYPES = ("IMAGE", "INT", "INT",)
     RETURN_NAMES = ("IMAGE", "width", "height",)
     FUNCTION = "execute"
-    CATEGORY = "WW"
+    CATEGORY = "image"
 
     def execute(self, image, width, height, keep_proportion, interpolation="nearest"):
         if keep_proportion is True:
@@ -83,10 +83,10 @@ class ImageResize:
 
 
 NODE_CLASS_MAPPINGS = {
-    "ImageResize": ImageResize,
+    "WW_ImageResize": ImageResize,
 }
 
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "ImageResize": "ImageResize",
+    "WW_ImageResize": "WW_ImageResize",
 }
