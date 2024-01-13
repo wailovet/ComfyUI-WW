@@ -68,8 +68,8 @@ class ImageResize:
             width = round(ow * ratio)
             height = round(oh * ratio)
 
-        width = width // 8 * 8
-        height = height // 8 * 8
+        width = width // 64 * 64
+        height = height // 64 * 64
 
         outputs = p(image)
         if interpolation == "lanczos":
