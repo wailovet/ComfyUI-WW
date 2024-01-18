@@ -87,7 +87,7 @@ class RandString:
     def INPUT_TYPES(s):
         return {
             "required": {
-                "text": ("STRING", {"forceInput": True, "multiline": True, "default": ""}),
+                "text": ("STRING", {"forceInput": False, "multiline": True, "default": ""}),
             }
         }
 
