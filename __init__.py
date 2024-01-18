@@ -97,7 +97,8 @@ class RandString:
     FUNCTION = "execute"
     CATEGORY = "utils"
 
-    def execute(self, text):
+    def execute(self, text, seed):
+        np.random.seed(seed)
         # 换行分割
         lines = text.split("\n")
         # 随机选择一行
