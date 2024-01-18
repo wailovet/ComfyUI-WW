@@ -82,11 +82,36 @@ class ImageResize:
         return (outputs, outputs.shape[2], outputs.shape[1],)
 
 
+class RandString:
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "text": ("STRING", {"forceInput": True, "multiline": True, "default": ""}),
+            }
+        }
+
+    RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("text",)
+    FUNCTION = "execute"
+    CATEGORY = "utils"
+
+    def execute(self, text):
+        # 换行分割
+        lines = text.split("\n")
+        # 随机选择一行
+        line = lines[np.random.randint(0, len(lines))]
+
+        return (line,)
+
+
 NODE_CLASS_MAPPINGS = {
     "WW_ImageResize": ImageResize,
+    "WW_RandString": RandString,
 }
 
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "WW_ImageResize": "WW_ImageResize",
+    "WW_RandString": "WW_RandString",
 }
