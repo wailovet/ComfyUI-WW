@@ -88,6 +88,7 @@ class RandString:
         return {
             "required": {
                 "text": ("STRING", {"forceInput": False, "multiline": True, "default": ""}),
+                "seed": ("INT", {"default": 1}),
             }
         }
 
