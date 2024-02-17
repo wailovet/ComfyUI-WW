@@ -82,6 +82,26 @@ class ImageResize:
         return (outputs, outputs.shape[2], outputs.shape[1],)
 
 
+class AppendString:
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "start": ("STRING", {"forceInput": True, "multiline": True, "default": ""}),
+                "text": ("STRING", {"forceInput": False, "multiline": True, "default": ""}), 
+                "end": ("STRING", {"forceInput": True, "multiline": True, "default": ""}),
+            }
+        }
+
+    RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("text",)
+    FUNCTION = "execute"
+    CATEGORY = "utils"
+
+    def execute(self, start, text, end):
+        return (start + text + end,)
+        
+
 class RandString:
     @classmethod
     def INPUT_TYPES(s):
