@@ -87,9 +87,9 @@ class AppendString:
     def INPUT_TYPES(s):
         return {
             "required": {
-                "start": ("STRING", {"forceInput": True, "multiline": True, "default": ""}),
-                "text": ("STRING", {"forceInput": False, "multiline": True, "default": ""}), 
-                "end": ("STRING", {"forceInput": True, "multiline": True, "default": ""}),
+                "start": ("STRING", {"forceInput": False, "multiline": True, "default": ""}),
+                "text": ("STRING", {"forceInput": True, "multiline": True, "default": ""}), 
+                "end": ("STRING", {"forceInput": False, "multiline": True, "default": ""}),
             }
         }
 
