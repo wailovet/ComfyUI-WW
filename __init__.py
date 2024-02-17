@@ -129,10 +129,65 @@ class RandString:
         return (line,)
 
 
+
+LAST_PREVIEW_IMAGE = []
+
+WW_PROGRESS_BAR_HOOK = None
+def ww_hook(value, total, preview_image):
+    if WW_PROGRESS_BAR_HOOK is not None:
+        WW_PROGRESS_BAR_HOOK(value, total, preview_image)
+    
+    
+    global LAST_PREVIEW_IMAGE
+    if value <= 1:
+        LAST_PREVIEW_IMAGE = []
+    imgformat, pliimg, size = preview_image 
+    LAST_PREVIEW_IMAGE.append(utils.Utils.pil2tensor(pliimg)[0])
+    print("value:", value, "total:", total, "preview_image:", preview_image)
+# comfy.utils.set_progress_bar_global_hook(ww_hook)
+
+# 延时启动
+import threading
+import time
+def start_server():
+    while True:
+        time.sleep(1)
+        if comfy.utils.PROGRESS_BAR_HOOK is not None:
+            global WW_PROGRESS_BAR_HOOK
+            WW_PROGRESS_BAR_HOOK = comfy.utils.PROGRESS_BAR_HOOK
+            comfy.utils.set_progress_bar_global_hook(ww_hook)
+            break
+threading.Thread(target=start_server).start()
+
+class ThisTimePreviewImages:
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "image": ("IMAGE",),
+            }
+        }
+    
+    RETURN_TYPES = ("IMAGE",)
+    RETURN_NAMES = ("image",)
+    FUNCTION = "execute"
+    CATEGORY = "utils"
+
+    def execute(self, image):
+        result = LAST_PREVIEW_IMAGE
+        result.append(image[0])
+        result = utils.Utils.list_tensor2tensor(result)
+        
+
+        print("result:", result)
+        return (result,)
+    
+
 NODE_CLASS_MAPPINGS = {
     "WW_ImageResize": ImageResize,
     "WW_AppendString": AppendString,
     "WW_RandString": RandString,
+    "WW_ThisTimePreviewImages": ThisTimePreviewImages,
 }
 
 
@@ -140,4 +195,5 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "WW_ImageResize": "WW_ImageResize",
     "WW_RandString": "WW_RandString",
     "WW_AppendString": "WW_AppendString",
+    "WW_ThisTimePreviewImages": "WW_ThisTimePreviewImages",
 }

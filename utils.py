@@ -75,6 +75,11 @@ class Utils:
         return torch.from_numpy(np.array(image).astype(np.float32) / 255.0).unsqueeze(0)
 
     
+    def list_tensor2tensor(data):
+        result_tensor = torch.stack(data)
+        return result_tensor
+
+
     def loadImage(path):
         img = Image.open(path)
         img = img.convert("RGB")

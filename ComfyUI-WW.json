@@ -7,5 +7,8 @@
   },
   "WW_AppendString": {
     "title": "WW字符串拼接"
+  },
+  "WW_ThisTimePreviewImages": {
+    "title": "WW本次预览图片组"
   }
 }
