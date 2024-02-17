@@ -25,8 +25,10 @@ import comfy.utils
 import torch.nn.functional as F
 import shutil
 
+WEB_DIRECTORY = "./web"
+
 translation_dir = os.path.join(os.path.dirname(
-    os.path.dirname(__file__)), "AIGODLIKE-COMFYUI-TRANSLATION")
+    os.path.dirname(__file__)), "AIGODLIKE-COMFYUI-TRANSLATION", "zh-CN", "Nodes")
 
 translation_config = os.path.join(os.path.dirname(__file__), "ComfyUI-WW.json")
 if os.path.exists(translation_dir):
@@ -88,7 +90,7 @@ class AppendString:
         return {
             "required": {
                 "start": ("STRING", {"forceInput": False, "multiline": True, "default": ""}),
-                "text": ("STRING", {"forceInput": True, "multiline": True, "default": ""}), 
+                "text": ("STRING", {"forceInput": True, "multiline": True, "default": ""}),
                 "end": ("STRING", {"forceInput": False, "multiline": True, "default": ""}),
             }
         }
@@ -100,7 +102,7 @@ class AppendString:
 
     def execute(self, start, text, end):
         return (start + text + end,)
-        
+
 
 class RandString:
     @classmethod
