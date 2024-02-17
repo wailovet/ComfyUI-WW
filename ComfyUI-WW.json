@@ -1,5 +1,11 @@
 {
   "WW_ImageResize": {
-    "title": "图片缩放+"
+    "title": "WW图片缩放"
+  },
+  "WW_RandString": {
+    "title": "WW随机字符串"
+  },
+  "WW_AppendString": {
+    "title": "WW字符串拼接"
   }
 }

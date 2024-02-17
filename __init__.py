@@ -129,6 +129,7 @@ class RandString:
 
 NODE_CLASS_MAPPINGS = {
     "WW_ImageResize": ImageResize,
+    "WW_AppendString": AppendString,
     "WW_RandString": RandString,
 }
 
@@ -136,4 +137,5 @@ NODE_CLASS_MAPPINGS = {
 NODE_DISPLAY_NAME_MAPPINGS = {
     "WW_ImageResize": "WW_ImageResize",
     "WW_RandString": "WW_RandString",
+    "WW_AppendString": "WW_AppendString",
 }
