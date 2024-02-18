@@ -138,19 +138,21 @@ WW_PROGRESS_BAR_HOOK = None
 def ww_hook(value, total, preview_image):
     if WW_PROGRESS_BAR_HOOK is not None:
         WW_PROGRESS_BAR_HOOK(value, total, preview_image)
+    try:
+        global ALL_PREVIEW_IMAGE
+        global PRE_PREVIEW_IMAGE
+        print("value:", value, "total:", total, "preview_image:", preview_image)
+        imgformat, pliimg, size = preview_image
+        if value <= 1:
+            PRE_PREVIEW_IMAGE = []
+        PRE_PREVIEW_IMAGE.append(pliimg)
 
-    global ALL_PREVIEW_IMAGE
-    global PRE_PREVIEW_IMAGE
-    imgformat, pliimg, size = preview_image
-    if value <= 1:
-        PRE_PREVIEW_IMAGE = []
-    PRE_PREVIEW_IMAGE.append(pliimg)
-
-    if value == total:
-        ALL_PREVIEW_IMAGE.extend(PRE_PREVIEW_IMAGE)
-        PRE_PREVIEW_IMAGE = []
-
-    print("value:", value, "total:", total, "preview_image:", preview_image)
+        if value == total:
+            ALL_PREVIEW_IMAGE.extend(PRE_PREVIEW_IMAGE)
+            PRE_PREVIEW_IMAGE = []
+    except Exception as e:
+        print("ww_hook:",e)
+ 
 # comfy.utils.set_progress_bar_global_hook(ww_hook)
 
 
