@@ -142,6 +142,8 @@ def ww_hook(value, total, preview_image):
         global ALL_PREVIEW_IMAGE
         global PRE_PREVIEW_IMAGE
         print("value:", value, "total:", total, "preview_image:", preview_image)
+        if preview_image is None:
+            return
         imgformat, pliimg, size = preview_image
         if value <= 1:
             PRE_PREVIEW_IMAGE = []
