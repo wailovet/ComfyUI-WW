@@ -129,26 +129,36 @@ class RandString:
         return (line,)
 
 
-
-LAST_PREVIEW_IMAGE = []
+PRE_PREVIEW_IMAGE = []
+ALL_PREVIEW_IMAGE = []
 
 WW_PROGRESS_BAR_HOOK = None
+
+
 def ww_hook(value, total, preview_image):
     if WW_PROGRESS_BAR_HOOK is not None:
         WW_PROGRESS_BAR_HOOK(value, total, preview_image)
-    
-    
-    global LAST_PREVIEW_IMAGE
+
+    global ALL_PREVIEW_IMAGE
+    global PRE_PREVIEW_IMAGE
+    imgformat, pliimg, size = preview_image
     if value <= 1:
-        LAST_PREVIEW_IMAGE = []
-    imgformat, pliimg, size = preview_image 
-    LAST_PREVIEW_IMAGE.append(utils.Utils.pil2tensor(pliimg)[0])
+        PRE_PREVIEW_IMAGE = []
+    PRE_PREVIEW_IMAGE.append(pliimg)
+
+    if value == total:
+        ALL_PREVIEW_IMAGE.extend(PRE_PREVIEW_IMAGE)
+        PRE_PREVIEW_IMAGE = []
+
     print("value:", value, "total:", total, "preview_image:", preview_image)
 # comfy.utils.set_progress_bar_global_hook(ww_hook)
+
 
 # 延时启动
 import threading
 import time
+
+
 def start_server():
     while True:
         time.sleep(1)
@@ -157,7 +167,10 @@ def start_server():
             WW_PROGRESS_BAR_HOOK = comfy.utils.PROGRESS_BAR_HOOK
             comfy.utils.set_progress_bar_global_hook(ww_hook)
             break
+
+
 threading.Thread(target=start_server).start()
+
 
 class ThisTimePreviewImages:
     @classmethod
@@ -167,21 +180,33 @@ class ThisTimePreviewImages:
                 "image": ("IMAGE",),
             }
         }
-    
+
     RETURN_TYPES = ("IMAGE",)
     RETURN_NAMES = ("image",)
     FUNCTION = "execute"
     CATEGORY = "utils"
 
     def execute(self, image):
-        result = LAST_PREVIEW_IMAGE
-        result.append(image[0])
-        result = utils.Utils.list_tensor2tensor(result)
-        
+        global ALL_PREVIEW_IMAGE
+        result = ALL_PREVIEW_IMAGE.copy()
 
-        print("result:", result)
+        max_w = 0
+        max_h = 0
+        for i in range(len(result)):
+            size = result[i].size
+            max_w = max(max_w, size[0])
+            max_h = max(max_h, size[1])
+
+        for i in range(len(result)):
+            result[i] = utils.Utils.pil2tensor(result[i].resize((max_w, max_h)))[0]
+
+        result.append(image[0])
+
+
+        result = utils.Utils.list_tensor2tensor(result)
+        # print("result:", result)
         return (result,)
-    
+
 
 NODE_CLASS_MAPPINGS = {
     "WW_ImageResize": ImageResize,
@@ -197,3 +222,18 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "WW_AppendString": "WW_AppendString",
     "WW_ThisTimePreviewImages": "WW_ThisTimePreviewImages",
 }
+
+
+routes = server.PromptServer.instance.routes
+
+from aiohttp import web
+
+
+@routes.post('/extention/clean_all_preview')
+def clean_all_preview(request):
+    print('clean_all_preview')
+    global ALL_PREVIEW_IMAGE
+    global PRE_PREVIEW_IMAGE
+    PRE_PREVIEW_IMAGE = []
+    ALL_PREVIEW_IMAGE = []
+    return web.json_response({'data': 'ok'})

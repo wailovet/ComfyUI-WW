@@ -22,7 +22,26 @@ const my_ui = {
      */
     async beforeRegisterNodeDef(nodeType, nodeData, app) {
         // console.log(`Registering node ${nodeData.name}`);
-        
+        switch (nodeData.name) {
+            case "WW_ThisTimePreviewImages":
+                nodeType.prototype.onNodeCreated = function () {
+                    this.addWidget("button", `CleanAllPreview`, "cleanAllPreview", () => {
+                        api.fetchApi(
+                            `/extention/clean_all_preview`,
+                            {
+                                method: "POST",
+                                body: JSON.stringify({
+                                    "clean_all_preview": true,
+                                }),
+                            }
+                        ).then((resp) => {
+                            console.log(resp);
+                            alert("清理成功");
+                        });
+
+                    });
+                }
+        }
     },
 };
 
