@@ -135,7 +135,7 @@ WW_PROGRESS_BAR_HOOK = None
 
 
 
-prompt_queue = server.PromptServer.prompt_queue
+prompt_queue = server.PromptServer.instance.prompt_queue
 CURRENT_PREVIEW_IMAGE = {
 
 }
