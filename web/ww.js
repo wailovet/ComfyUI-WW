@@ -23,7 +23,7 @@ const my_ui = {
     async beforeRegisterNodeDef(nodeType, nodeData, app) {
         // console.log(`Registering node ${nodeData.name}`);
         switch (nodeData.name) {
-            case "WW_ThisTimePreviewImages":
+            case "WW_AccumulationPreviewImages":
                 nodeType.prototype.onNodeCreated = function () {
                     this.addWidget("button", `CleanAllPreview`, "cleanAllPreview", () => {
                         api.fetchApi(

@@ -131,6 +131,7 @@ class RandString:
 
 PRE_PREVIEW_IMAGE = []
 ALL_PREVIEW_IMAGE = []
+CURRENT_PREVIEW_IMAGE = []
 
 WW_PROGRESS_BAR_HOOK = None
 
@@ -141,6 +142,7 @@ def ww_hook(value, total, preview_image):
     try:
         global ALL_PREVIEW_IMAGE
         global PRE_PREVIEW_IMAGE
+        global CURRENT_PREVIEW_IMAGE
         print("value:", value, "total:", total, "preview_image:", preview_image)
         if preview_image is None:
             return
@@ -148,6 +150,7 @@ def ww_hook(value, total, preview_image):
         if value <= 1:
             PRE_PREVIEW_IMAGE = []
         PRE_PREVIEW_IMAGE.append(pliimg)
+        CURRENT_PREVIEW_IMAGE.append(pliimg)
 
         if value == total:
             ALL_PREVIEW_IMAGE.extend(PRE_PREVIEW_IMAGE)
@@ -176,7 +179,7 @@ def start_server():
 threading.Thread(target=start_server).start()
 
 
-class ThisTimePreviewImages:
+class AccumulationPreviewImages:
     @classmethod
     def INPUT_TYPES(s):
         return {
@@ -211,12 +214,51 @@ class ThisTimePreviewImages:
         # print("result:", result)
         return (result,)
 
+class CurrentPreviewImages:
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "image": ("IMAGE",),
+            }
+        }
+
+    RETURN_TYPES = ("IMAGE",)
+    RETURN_NAMES = ("image",)
+    FUNCTION = "execute"
+    CATEGORY = "utils"
+
+    def execute(self, image):
+        global CURRENT_PREVIEW_IMAGE
+        result = CURRENT_PREVIEW_IMAGE.copy()
+
+        max_w = 0
+        max_h = 0
+        for i in range(len(result)):
+            size = result[i].size
+            max_w = max(max_w, size[0])
+            max_h = max(max_h, size[1])
+
+        for i in range(len(result)):
+            result[i] = utils.Utils.pil2tensor(result[i].resize((max_w, max_h)))[0]
+
+        result.append(image[0])
+
+
+        result = utils.Utils.list_tensor2tensor(result)
+
+        CURRENT_PREVIEW_IMAGE = []
+
+        # print("result:", result)
+        return (result,)
+
 
 NODE_CLASS_MAPPINGS = {
     "WW_ImageResize": ImageResize,
     "WW_AppendString": AppendString,
     "WW_RandString": RandString,
-    "WW_ThisTimePreviewImages": ThisTimePreviewImages,
+    "WW_AccumulationPreviewImages": AccumulationPreviewImages,
+    "WW_CurrentPreviewImages": CurrentPreviewImages,
 }
 
 
@@ -224,7 +266,8 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "WW_ImageResize": "WW_ImageResize",
     "WW_RandString": "WW_RandString",
     "WW_AppendString": "WW_AppendString",
-    "WW_ThisTimePreviewImages": "WW_ThisTimePreviewImages",
+    "WW_AccumulationPreviewImages": "WW_AccumulationPreviewImages",
+    "WW_CurrentPreviewImages": "WW_CurrentPreviewImages",
 }
 
 
