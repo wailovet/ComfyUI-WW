@@ -131,10 +131,26 @@ class RandString:
 
 PRE_PREVIEW_IMAGE = []
 ALL_PREVIEW_IMAGE = []
-CURRENT_PREVIEW_IMAGE = []
-
 WW_PROGRESS_BAR_HOOK = None
 
+
+
+prompt_queue = server.PromptServer.prompt_queue
+CURRENT_PREVIEW_IMAGE = {
+
+}
+
+def get_current_queue_id():
+    current_queue = prompt_queue.get_current_queue()
+    queue_running = current_queue[0]
+    if queue_running is not None:
+        queue_running_id = None
+        try:
+            queue_running_id = queue_running[0][1]
+        except:
+            pass
+        return queue_running_id
+    return None
 
 def ww_hook(value, total, preview_image):
     if WW_PROGRESS_BAR_HOOK is not None:
@@ -150,11 +166,20 @@ def ww_hook(value, total, preview_image):
         if value <= 1:
             PRE_PREVIEW_IMAGE = []
         PRE_PREVIEW_IMAGE.append(pliimg)
-        CURRENT_PREVIEW_IMAGE.append(pliimg)
+
 
         if value == total:
             ALL_PREVIEW_IMAGE.extend(PRE_PREVIEW_IMAGE)
             PRE_PREVIEW_IMAGE = []
+
+
+        
+        
+        queue_running_id = get_current_queue_id()
+        if queue_running_id is not None:
+            if CURRENT_PREVIEW_IMAGE.get(queue_running_id, None) is None:
+                CURRENT_PREVIEW_IMAGE[queue_running_id] = []
+            CURRENT_PREVIEW_IMAGE[queue_running_id].append(pliimg)
     except Exception as e:
         print("ww_hook:",e)
  
@@ -247,7 +272,11 @@ class CurrentPreviewImages:
 
         result = utils.Utils.list_tensor2tensor(result)
 
-        CURRENT_PREVIEW_IMAGE = []
+
+        
+        queue_running_id = get_current_queue_id()
+        if queue_running_id is not None:
+            del CURRENT_PREVIEW_IMAGE[queue_running_id]
 
         # print("result:", result)
         return (result,)
@@ -272,6 +301,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
 
 
 routes = server.PromptServer.instance.routes
+
 
 from aiohttp import web
 
