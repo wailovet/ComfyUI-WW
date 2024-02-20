@@ -255,7 +255,12 @@ class CurrentPreviewImages:
 
     def execute(self, image):
         global CURRENT_PREVIEW_IMAGE
-        result = CURRENT_PREVIEW_IMAGE.copy()
+
+        queue_running_id = get_current_queue_id()
+
+
+
+        result = CURRENT_PREVIEW_IMAGE.get(queue_running_id, [])
 
         max_w = 0
         max_h = 0
@@ -274,7 +279,6 @@ class CurrentPreviewImages:
 
 
         
-        queue_running_id = get_current_queue_id()
         if queue_running_id is not None:
             del CURRENT_PREVIEW_IMAGE[queue_running_id]
 
