@@ -1,5 +1,7 @@
 import { app } from "../../scripts/app.js";
 import { api } from "../../scripts/api.js";
+import { ComfyWidgets } from "/scripts/widgets.js";
+
 
 async function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
