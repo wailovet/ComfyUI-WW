@@ -40,7 +40,7 @@ const my_ui = {
           });
         };
 
-      case "PreviewTextNode":
+      case "WW_PreviewTextNode":
         // Node Created
         const onNodeCreated = nodeType.prototype.onNodeCreated;
         nodeType.prototype.onNodeCreated = function () {
