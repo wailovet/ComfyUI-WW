@@ -392,8 +392,10 @@ https://github.com/hahnec/color-matcher/
     def colormatch(self, image_ref, image_target, method):
         try:
             from color_matcher import ColorMatcher
-        except:
-            raise Exception("Can't import color-matcher, did you install requirements.txt? Manual install: pip install color-matcher")
+        except ImportError:
+            subprocess.check_call([sys.executable, "-m", "pip", "install", "color-matcher"])
+            from color_matcher import ColorMatcher
+            # raise Exception("Can't import color-matcher, did you install requirements.txt? Manual install: pip install color-matcher")
         cm = ColorMatcher()
         image_ref = image_ref.cpu()
         image_target = image_target.cpu()
