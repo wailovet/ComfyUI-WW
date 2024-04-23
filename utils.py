@@ -3,10 +3,11 @@ import os
 import subprocess
 import sys
 
+import cv2
 import numpy as np
 import folder_paths
 import base64
-from PIL import Image
+from PIL import Image, ImageFilter, ImageEnhance
 import io
 import torch
 
@@ -75,6 +76,14 @@ class Utils:
         return torch.from_numpy(np.array(image).astype(np.float32) / 255.0).unsqueeze(0)
 
     
+    def pil2cv(image):
+        return cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
+
+    def cv2pil(image):
+        return Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+    
+
+
     def list_tensor2tensor(data):
         result_tensor = torch.stack(data)
         return result_tensor
@@ -84,3 +93,79 @@ class Utils:
         img = Image.open(path)
         img = img.convert("RGB")
         return img
+    
+
+
+
+
+    
+    def seamlessclone(src:Image, dst, mask, method):
+        try:
+            import cv2 
+        except ImportError:
+            subprocess.check_call([sys.executable, "-m", "pip", "install", "opencv-python"])
+            import cv2
+            # raise Exception("Can't import cv2, did you install requirements.txt? Manual install: pip install opencv-python")
+        
+
+        src = Utils.tensor2pil(src)
+        width, height = src.size 
+        src = Utils.pil2cv(src)
+
+        dst = Utils.tensor2pil(dst)
+        dst = dst.resize((width, height)) 
+        dst = Utils.pil2cv(dst)
+
+ 
+        src_mask = mask.reshape((-1, 1, mask.shape[-2], mask.shape[-1])).movedim(1, -1).expand(-1, -1, -1, 3)
+        src_mask = Utils.tensor2pil(src_mask)
+        src_mask = src_mask.resize((width, height)) 
+        f_src_mask = Utils.pil2cv(src_mask.copy().filter(ImageFilter.GaussianBlur(15)))
+        src_mask = Utils.pil2cv(src_mask)    
+
+
+        left, top , right, bottom = 0, 0, src_mask.shape[1], src_mask.shape[0]
+        for i in range(src_mask.shape[0]):
+            for j in range(src_mask.shape[1]):
+                if src_mask[i][j][0] > 0:
+                    top = i
+                    break
+            if top != 0:
+                break
+        for i in range(src_mask.shape[0]-1, -1, -1):
+            for j in range(src_mask.shape[1]):
+                if src_mask[i][j][0] > 0:
+                    bottom = i
+                    break
+            if bottom != src_mask.shape[0]:
+                break
+        for j in range(src_mask.shape[1]):
+            for i in range(src_mask.shape[0]):
+                if src_mask[i][j][0] > 0:
+                    left = j
+                    break
+            if left != 0:
+                break
+
+        for j in range(src_mask.shape[1]-1, -1, -1):
+            for i in range(src_mask.shape[0]):
+                if src_mask[i][j][0] > 0:
+                    right = j
+                    break
+            if right != src_mask.shape[1]:
+                break
+
+        center = (left + right) // 2, (top + bottom) // 2
+
+        if method == 'normal_clone':
+            output = cv2.seamlessClone(dst, src, f_src_mask, center, cv2.NORMAL_CLONE)
+        elif method == 'mixed_clone':
+            output = cv2.seamlessClone(dst, src, f_src_mask, center, cv2.MIXED_CLONE) 
+        else:
+            raise ValueError("Unknown method")
+        
+        final = Utils.pil2tensor(Utils.cv2pil(output))
+        
+ 
+ 
+        return (final, )

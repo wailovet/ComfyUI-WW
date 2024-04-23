@@ -421,3 +421,33 @@ https://github.com/hahnec/color-matcher/
             out.append(torch.from_numpy(image_result))
         return (torch.stack(out, dim=0).to(torch.float32), )
     
+
+NODE_CLASS_MAPPINGS["ColorMatch"] = ColorMatch
+NODE_DISPLAY_NAME_MAPPINGS["ColorMatch"] = "ColorMatch"
+
+import importlib
+class seamlessClone:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "src": ("IMAGE",),
+                "dst": ("IMAGE",),
+                "mask": ("MASK",),
+                "method": (['normal_clone','mixed_clone',], { "default": 'normal_clone' }),  
+            },
+        }
+    
+    CATEGORY = "utils"
+
+    RETURN_TYPES = ("IMAGE",)
+    RETURN_NAMES = ("image",)
+    FUNCTION = "seamlessclone" 
+
+    def seamlessclone(self, src, dst, mask, method):
+        importlib.reload(utils)
+        return utils.Utils.seamlessclone(src, dst, mask, method)
+    
+
+NODE_CLASS_MAPPINGS["seamlessClone"] = seamlessClone
+NODE_DISPLAY_NAME_MAPPINGS["seamlessClone"] = "seamlessClone"
