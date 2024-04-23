@@ -305,7 +305,7 @@ class WW_PreviewTextNode:
     OUTPUT_NODE = True
     FUNCTION = "preview_text"
 
-    CATEGORY = "AlekPet Nodes/extras"
+    CATEGORY = "utils"
 
     def preview_text(self, text, prompt=None, extra_pnginfo=None):
         return {"ui": {"string": [text,]}, "result": (text,)}
@@ -371,7 +371,7 @@ class ColorMatch:
             },
         }
     
-    CATEGORY = "KJNodes/image"
+    CATEGORY = "utils"
 
     RETURN_TYPES = ("IMAGE",)
     RETURN_NAMES = ("image",)
