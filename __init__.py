@@ -451,3 +451,27 @@ class seamlessClone:
 
 NODE_CLASS_MAPPINGS["seamlessClone"] = seamlessClone
 NODE_DISPLAY_NAME_MAPPINGS["seamlessClone"] = "seamlessClone"
+
+
+class mask_edge_blur:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "mask": ("MASK",),
+                "radius": ("INT", {"default": 5, "min": 0, "max": 100, "step": 1, }),
+            },
+        }
+    
+    CATEGORY = "utils"
+
+    RETURN_TYPES = ("MASK",)
+    RETURN_NAMES = ("mask",)
+    FUNCTION = "mask_edge_blur" 
+
+    def mask_edge_blur(self, mask, radius):
+        importlib.reload(utils)
+        return utils.Utils.mask_edge_blur(mask, radius)
+
+NODE_CLASS_MAPPINGS["mask_edge_blur"] = mask_edge_blur
+NODE_DISPLAY_NAME_MAPPINGS["mask_edge_blur"] = "mask_edge_blur"

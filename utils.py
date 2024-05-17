@@ -169,3 +169,29 @@ class Utils:
  
  
         return (final, )
+    
+
+
+    
+    def mask_edge_blur(interested_mask, edge_feathering):
+        
+        mask_image = Utils.tensor2pil(interested_mask)
+        mask_image_cv2 = Utils.pil2cv(mask_image)    
+        
+        # 高斯模糊 
+        dilation2 = Utils.cv2pil(mask_image_cv2)
+        dilation2 = mask_image.filter(ImageFilter.GaussianBlur(edge_feathering))
+
+
+        # mask_image dilation2 图片蒙版叠加
+        dilation2 = Utils.pil2cv(dilation2)
+        # dilation2[mask_image_cv2 < 127] = 0
+        dilation2 = Utils.cv2pil(dilation2)
+
+
+
+        # to RGB
+        dilation2 = np.array(dilation2)
+        dilation2 = dilation2[:,:,0]    
+        return Utils.pil2tensor(dilation2)
+    
